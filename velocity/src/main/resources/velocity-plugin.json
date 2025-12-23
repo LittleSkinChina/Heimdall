@@ -1,0 +1,17 @@
+{
+  "id": "${pluginId}",
+  "name": "${name}",
+  "description": "${description}",
+  "version": "${version}",
+  "authors": [
+    "${author}"
+  ],
+  "url": "${url}",
+  "dependencies": [
+    {
+      "id": "luckperms",
+      "optional": true
+    }
+  ],
+  "main": "${group}.velocity.VelocityMain"
+}

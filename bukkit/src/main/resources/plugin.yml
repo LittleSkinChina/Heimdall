@@ -1,0 +1,10 @@
+name: ${name}
+version: ${version}
+description: ${description}
+main: ${group}.bukkit.BukkitMain
+load: STARTUP
+authors: ["${author}"]
+website: ${url}
+softdepend: ["LuckPerms"]
+api-version: 1.13
+folia-supported: true
