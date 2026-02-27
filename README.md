@@ -105,27 +105,20 @@ kick:
     not-verified: |
         <b><yellow>This Minecraft account is not verified or the verificationhas expired.</yellow></b>
         <newline>
-        <newline>
         To join the server, please verify your account first at:
-        <newline>
         <aqua>https://heimdall.honoka.cafe</aqua>
     hacked: |
         <b><red>This Minecraft account has been marked as hacked and not allowed to join the server.</red></b>
         <newline>
-        <newline>
         For more information, please visit:
-        <newline>
         <aqua>https://heimdall.honoka.cafe</aqua>
     outlook: |
         <b><yellow>This Minecraft account is link to an Outlook email address and not allowed to join the server.</yellow></b>
         <newline>
-        <newline>
         To learn more about this restriction and update your email address, please visit:
-        <newline>
         <aqua>https://heimdall.honoka.cafe/#outlook-note</aqua>
     request-error: |
         <yellow>An error occurred while verifying your Minecraft account. Please try again later.</yellow>
-        <newline>
         <newline>
         If the issue persists, please contact the server administrators.
     service-unavailable: <yellow>Heimdall service is currently unavailable. Please try again later.</yellow>

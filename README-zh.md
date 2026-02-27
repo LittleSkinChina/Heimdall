@@ -36,7 +36,7 @@ Heimdall 服务器插件支持多种 Minecraft 服务端平台，包括：
 
 安装 Heimdall 服务器插件后，所有玩家在进入服务器前都需要通过 Heimdall 的 Minecraft 账号验证。
 
-对于群组服，只需在代理端（BungeeCord / Waterfall / Velocity）安装 Heimdall 服务器插件即可，无需在后端服务器上安装。
+对于群组服，只需在代理端（BungeeCord / Waterfall / Velocity）安装 Heimdall 服务器插件即可，无需在后端子服上安装。
 
 ### 插件配置 & 本地化
 
@@ -103,22 +103,20 @@ kick:
     not-verified: |
         <b><yellow>你的 Minecraft 账号尚未通过 Heimdall 验证，或验证已过期。</yellow></b>
         <newline>
-        <newline>
         请使用浏览器访问以下地址，完成 Minecraft 账号验证：
-        <newline>
         <aqua>https://heimdall.honoka.cafe</aqua>
     hacked: |
-        <b><red>该 Minecraft 账号已被标记为黑卡账号，禁止进入服务器。</red></b>
+        <b><red>你的 Minecraft 账号是黑卡账号，禁止进入服务器。</red></b>
+        <newline>
+        如需了解更多信息，请访问：
+        <aqua>https://heimdall.honoka.cafe</aqua>
     outlook: |
-        <b><yellow>安全策略限制：该 Minecraft 账号对应的 Microsoft 帐户使用了 Outlook 邮箱作为主用户名，因此暂时无法进入服务器。</yellow></b>
+        <b><yellow>安全策略限制：你的 Minecraft 账号对应的 Microsoft 帐户使用了 Outlook 邮箱作为主用户名，因此暂时无法进入服务器。</yellow></b>
         <newline>
-        <newline>
-        要了解关于该限制的更多信息，以及更新 Microsoft 帐户主用户名的方法，请参阅：
-        <newline>
+        如需了解关于该限制的更多信息，以及更新 Microsoft 帐户主用户名的方法，请参阅：
         <aqua>https://heimdall.honoka.cafe/#outlook-note</aqua>
     request-error: |
         <yellow>验证 Minecraft 账号时发生错误，请稍后再试。</yellow>
-        <newline>
         <newline>
         如果问题持续存在，请联系服务器管理员。
     service-unavailable: <yellow>Heimdall 服务当前不可用，请稍后再试。</yellow>
@@ -144,7 +142,7 @@ Heimdall 服务器插件使用 [bStats](https://bstats.org) 收集匿名的插�
 
 ### 版权信息
 
-Copyright (c) 2025-present Suzhou Honoka Technology Co., Ltd. Made with <3 by [LittleSkin](https://littleskin.cn).
+Copyright (c) 2026-present Suzhou Honoka Technology Co., Ltd. Made with <3 by [LittleSkin](https://littleskin.cn).
 
 _非 Minecraft 官方产品。未经 Mojang 或 Microsoft 批准，也不与 Mojang 或 Microsoft 关联。_
 
