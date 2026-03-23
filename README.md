@@ -11,7 +11,7 @@ Heimdall provides a Web service and an HTTP API:
 
 This repository contains the source code for the Heimdall Minecraft server plugin. The plugin is responsible for querying the Heimdall API when a player joins and determining whether to allow them in based on their verification status.
 
-The Heimdall plugin supports multiple Minecrfat server platforms, including:
+The Heimdall plugin supports multiple Minecraft server platforms, including:
 
 - Spigot / Paper and their forks
   - Supports Minecraft 1.8 or higher
