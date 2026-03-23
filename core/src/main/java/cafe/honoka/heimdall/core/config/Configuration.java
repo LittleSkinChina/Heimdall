@@ -47,4 +47,19 @@ public class Configuration implements SettingsHolder {
         "- DENY: Deny all joining requests",
     })
     public static final Property<OfflineAction> OFFLINE_ACTION = new EnumProperty<>(OfflineAction.class, "offline-action", OfflineAction.DENY);
+
+    @Comment({
+        "Force Bedrock Edition players connected by Geyser & authenticated by Floodgate to verify their account?",
+        "According to the verification policy, this may require the player to have a Java Edition license",
+        "Hacked accounts will still be blocked even if this is set to false"
+    })
+    public static final Property<Boolean> FLOODGATE_FORCE_VERIFICATION = new BooleanProperty("floodgate.force-verification", true);
+
+    @Comment({
+        "Force Bedrock Edition players connected by Geyser & authenticated by Floodgate to link their Java Edition account?",
+        "Two accounts might not be the \"same\" account, and the linked account must be verified too",
+        "Supports both Local Linking and Global Linking, which provided by Floodgate",
+        "For more information about account linking, please visit: https://geysermc.org/wiki/floodgate/linking"
+    })
+    public static final Property<Boolean> FLOODGATE_FORCE_LINKING = new BooleanProperty("floodgate.force-linking", true);
 }

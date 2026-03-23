@@ -20,6 +20,8 @@ Heimdall 服务器插件支持多种 Minecraft 服务端平台，包括：
 - Velocity
   - 支持 3.1.0 或更高版本
 
+Heimdall 服务器插件支持验证通过 Geyser 和 Floodgate。
+
 ### 获取插件
 
 你可以在 [Releases](https://github.com/LittleSkinChina/Heimdall/releases) 页面下载到最新版本的插件。
@@ -69,6 +71,16 @@ block-outlook: false
 # - ALLOW: 允许所有玩家进入服务器
 # - DENY: 禁止所有玩家进入服务器
 offline-action: DENY
+floodgate:
+    # 是否强制要求通过 Geyser 连接并由 Floodgate 认证的基岩版玩家进行账号验证？
+    # 根据验证策略，这可能需要玩家拥有 Java 版正版账号
+    # 即使设置为 false，黑卡账号仍然会被拦截
+    force-verification: true
+    # 是否强制要求通过 Geyser 连接并由 Floodgate 认证的基岩版玩家绑定 Java 版账号？
+    # 两个账号可能不是「同一个」账号，并且绑定的 Java 版账号也必须通过验证
+    # 支持 Floodgate 提供的 Local Linking 和 Global Linking
+    # 有关账号绑定的更多信息，请参阅：https://geysermc.org/wiki/floodgate/linking
+    force-linking: true
 ```
 
 #### 语言文件（`lang.yml`）
@@ -120,6 +132,19 @@ kick:
         <newline>
         如果问题持续存在，请联系服务器管理员。
     service-unavailable: <yellow>Heimdall 服务当前不可用，请稍后再试。</yellow>
+
+    floodgate:
+        not-linked: |
+            <b><yellow>你需要绑定一个 Java 版账号才能进入服务器。</yellow></b>
+            <newline>
+            请使用浏览器访问以下地址，完成账号绑定：
+            <aqua>https://link.geysermc.org</aqua>
+        java-not-verified: |
+            <b><yellow>你绑定的 Java 版账号尚未通过 Heimdall 验证，或验证已过期。</yellow></b>
+            <newline>
+            请使用浏览器访问以下地址，完成绑定账号的验证：
+            <aqua>https://heimdall.honoka.cafe</aqua>
+
 ```
 
 ### 构建插件

@@ -98,4 +98,22 @@ public class Language implements SettingsHolder {
         "kick.service-unavailable",
         "<yellow>Heimdall service is currently unavailable. Please try again later.</yellow>"
     );
+    public static final Property<String> KICK_FLOODGATE_NOT_LINKED = new StringProperty(
+        "kick.floodgate.not-linked",
+        "<b><yellow>You must link a Java Edition account to join this server.</yellow></b>"
+            + "<newline>"
+            + "<newline>"
+            + "Please link your Java Edition account first at:"
+            + "<newline>"
+            + "<aqua>https://link.geysermc.org</aqua>"
+    );
+    public static final Property<String> KICK_FLOODGATE_JAVA_NOT_VERIFIED = new StringProperty(
+        "kick.floodgate.java-not-verified",
+        "<b><yellow>Your linked Java Edition account is not verified or the verification has expired.</yellow></b>"
+            + "<newline>"
+            + "<newline>"
+            + "To join the server, please verify the linked account first at:"
+            + "<newline>"
+            + "<aqua>https://heimdall.honoka.cafe</aqua>"
+    );
 }

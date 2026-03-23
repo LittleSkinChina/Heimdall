@@ -3,4 +3,4 @@ version: ${version}
 main: ${group}.bungee.BungeeMain
 author: ${author}
 description: ${description}
-softDepends: ["LuckPerms"]
+softDepends: ["LuckPerms", "floodgate"]

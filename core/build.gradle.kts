@@ -7,6 +7,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    compileOnly("org.geysermc.floodgate:api:2.2.4-SNAPSHOT")
     compileOnly("org.slf4j:slf4j-api:2.0.17")
     compileOnly("org.apache.logging.log4j:log4j-api:2.25.3")
     implementation("com.squareup.okhttp3:okhttp:5.3.0")

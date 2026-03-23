@@ -36,6 +36,10 @@ allprojects {
             name = "panda-lang-repo"
             url = uri("https://repo.panda-lang.org/releases")
         }
+        maven {
+            name = "opencollab-snapshot"
+            url = uri("https://repo.opencollab.dev/main/")
+        }
     }
 }
 

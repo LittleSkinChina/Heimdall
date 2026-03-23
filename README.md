@@ -20,6 +20,8 @@ The Heimdall plugin supports multiple Minecrfat server platforms, including:
 - Velocity
   - Supports version 3.1.0 or higher
 
+Geyser and Floodgate are supported.
+
 ### Get the Plugin
 
 You can get the latest version of plugin from the [Releases](https://github.com/LittleSkinChina/Heimdall/releases) page.
@@ -69,6 +71,16 @@ block-outlook: false
 # - ALLOW: Allow all joining requests disregarding verification status
 # - DENY: Deny all joining requests
 offline-action: DENY
+floodgate:
+    # Force Bedrock Edition players connected by Geyser & authenticated by Floodgate to verify their account?
+    # According to the verification policy, this may require the player to have a Java Edition license
+    # Hacked accounts will still be blocked even if this is set to false
+    force-verification: true
+    # Force Bedrock Edition players connected by Geyser & authenticated by Floodgate to link their Java Edition account?
+    # Two accounts might not be the "same" account, and the linked account must be verified too
+    # Supports both Local Linking and Global Linking, which provided by Floodgate
+    # For more information about account linking, please visit: https://geysermc.org/wiki/floodgate/linking
+    force-linking: true
 ```
 
 #### Language File (`lang.yml`)
@@ -122,6 +134,18 @@ kick:
         <newline>
         If the issue persists, please contact the server administrators.
     service-unavailable: <yellow>Heimdall service is currently unavailable. Please try again later.</yellow>
+
+    floodgate:
+        not-linked: |
+            <b><yellow>You must link a Java Edition account to join this server.</yellow></b>
+            <newline>
+            Please link your Java Edition account first at:
+            <aqua>https://link.geysermc.org</aqua>
+        java-not-verified: |
+            <b><yellow>Your linked Java Edition account is not verified or the verification has expired.</yellow></b>
+            <newline>
+            To join the server, please verify the linked account first at:
+            <aqua>https://heimdall.honoka.cafe</aqua>
 
 ```
 

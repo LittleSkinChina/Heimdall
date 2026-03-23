@@ -5,12 +5,12 @@ import cafe.honoka.heimdall.core.config.Language;
 import cafe.honoka.heimdall.core.config.OfflineAction;
 import cafe.honoka.heimdall.core.exceptions.*;
 import cafe.honoka.heimdall.core.logger.PlatformLogger;
-import cafe.honoka.heimdall.core.query.QueryResponse;
-import cafe.honoka.heimdall.core.query.Status;
+import cafe.honoka.heimdall.core.query.*;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.properties.Property;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -35,13 +35,18 @@ public class Core {
     private final Gson gson;
     private final MiniMessage mm;
     private final PlatformAdapter platformAdapter;
+    private final FloodgateWrapper floodgate;
 
     public Core(final PlatformAdapter platformAdapter) {
         Path dataDirectory = platformAdapter.getDataDirectory();
         this.platformAdapter = platformAdapter;
         this.logger = this.platformAdapter.getLogger();
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+            .registerTypeAdapter(BaseQueryResponse.class, new QueryResponseDeserializer())
+            .create();
         this.mm = MiniMessage.miniMessage();
+
+        this.floodgate = Core.isFloodgateInstalled() ? new FloodgateWrapper() : null;
 
         this.config = SettingsManagerBuilder
             .withYamlFile(dataDirectory.resolve("config.yml"))
@@ -90,15 +95,24 @@ public class Core {
         this.logger.info(this.language.getProperty(Language.CONSOLE_INITIALIZED));
     }
 
-    private Request getRequest(String uuid) throws InvalidRootException {
+    private static boolean isFloodgateInstalled() {
+        try {
+            Class.forName("org.geysermc.floodgate.api.FloodgateApi");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    private Request getRequest(String id, String type) throws InvalidRootException {
         String root = this.config.getProperty(Configuration.API_ROOT);
         try {
             HttpUrl url = HttpUrl.get(root)
                 .newBuilder()
                 .addPathSegment("v1")
                 .addPathSegment("query")
-                .addPathSegment("uuid")
-                .addPathSegment(uuid)
+                .addPathSegment(type)
+                .addPathSegment(id)
                 .addQueryParameter("before", String.valueOf(this.config.getProperty(Configuration.VERIFICATION_VALIDATION)))
                 .build();
 
@@ -112,11 +126,19 @@ public class Core {
         }
     }
 
-    private Optional<QueryResponse> query(String uuid) throws ExpectableException {
+    private Request getUuidRequest(UUID id) throws InvalidRootException {
+        return this.getRequest(id.toString(), "uuid");
+    }
+
+    private Request getXuidRequest(String id) throws InvalidRootException {
+        return this.getRequest(id, "xuid");
+    }
+
+    private Optional<BaseQueryResponse> query(Request req) throws ExpectableException {
         int respCode;
         String respBody;
 
-        try (Response response = this.httpClient.newCall(this.getRequest(uuid)).execute()) {
+        try (Response response = this.httpClient.newCall(req).execute()) {
             respCode = response.code();
             respBody = response.body().string();
         } catch (IOException e) {
@@ -135,8 +157,8 @@ public class Core {
                 return Optional.empty();
             default:
                 try {
-                    QueryResponse status = gson.fromJson(respBody, QueryResponse.class);
-                    if (status == null || status.uuid == null || status.status == null || status.outlook == null) {
+                    BaseQueryResponse status = gson.fromJson(respBody, BaseQueryResponse.class);
+                    if (status == null || status.status == null || status.outlook == null) {
                         this.logger.error(language.getProperty(Language.CONSOLE_INVALID_RESPONSE));
                         this.logger.error("Response Status Code: " + respCode);
                         this.logger.error("Response Body: " + respBody);
@@ -154,29 +176,71 @@ public class Core {
         }
     }
 
+    private Result decide(BaseQueryResponse resp) {
+        if (resp.status == Status.HACKED) {
+            return new Result(false, getMessage(Language.KICK_HACKED));
+        }
+        if (resp.outlook && this.config.getProperty(Configuration.BLOCK_OUTLOOK)) {
+            return new Result(false, getMessage(Language.KICK_OUTLOOK));
+        }
+        return new Result(true, null);
+    }
+
+    private Result checkJavaPlayer(UUID uuid) throws ExpectableException {
+        BaseQueryResponse resp = this.query(this.getUuidRequest(uuid)).orElse(null);
+        if (resp == null) {
+            return new Result(false, getMessage(Language.KICK_NOT_VERIFIED));
+        }
+        return decide(resp);
+    }
+
+    private Result checkBedrockPlayer(UUID id) throws ExpectableException {
+        boolean forceVerification = this.config.getProperty(Configuration.FLOODGATE_FORCE_VERIFICATION);
+        boolean forceLinking = this.config.getProperty(Configuration.FLOODGATE_FORCE_LINKING);
+        BedrockPlayer player = this.floodgate.getBedrockPlayer(id);
+
+        // Enforce account linking if configured
+        if (player.linked == null && forceLinking) {
+            return new Result(false, getMessage(Language.KICK_FLOODGATE_NOT_LINKED));
+        }
+
+        // Verify the Bedrock account via XUID
+        BaseQueryResponse xuidResp = this.query(this.getXuidRequest(player.xuid)).orElse(null);
+        if (xuidResp != null) {
+            Result xuidResult = decide(xuidResp);
+            if (!xuidResult.good) {
+                return xuidResult;
+            }
+        } else if (forceVerification) {
+            return new Result(false, getMessage(Language.KICK_NOT_VERIFIED));
+        }
+
+        // Verify the linked Java account if present
+        if (player.linked != null) {
+            BaseQueryResponse linkedResp = this.query(this.getUuidRequest(player.linked)).orElse(null);
+            if (linkedResp == null) {
+                return new Result(false, getMessage(Language.KICK_FLOODGATE_JAVA_NOT_VERIFIED));
+            }
+            return decide(linkedResp);
+        }
+
+        return new Result(true, null);
+    }
+
     public CompletableFuture<Result> check(UUID id) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                QueryResponse resp = this.query(id.toString()).orElse(null);
-                if (resp == null) {
-                    return new Result(false, mm.deserialize(this.language.getProperty(Language.KICK_NOT_VERIFIED)));
-                }
-                if (resp.status == Status.HACKED) {
-                    return new Result(false, mm.deserialize(this.language.getProperty(Language.KICK_HACKED)));
-                }
-                if (resp.outlook && this.config.getProperty(Configuration.BLOCK_OUTLOOK)) {
-                    return new Result(false, mm.deserialize(this.language.getProperty(Language.KICK_OUTLOOK)));
-                }
-                return new Result(true, null);
+                boolean isBedrock = this.floodgate != null && this.floodgate.isBedrockPlayer(id);
+                return isBedrock ? checkBedrockPlayer(id) : checkJavaPlayer(id);
             } catch (ServiceUnavailableException e) {
                 if (this.config.getProperty(Configuration.OFFLINE_ACTION) == OfflineAction.ALLOW) {
                     this.logger.warning(this.language.getProperty(Language.CONSOLE_SERVICE_UNAVAILABLE_ALLOWED_JOIN));
                     return new Result(true, null);
                 } else {
-                    return new Result(false, mm.deserialize(this.language.getProperty(Language.KICK_SERVICE_UNAVAILABLE)));
+                    return new Result(false, getMessage(Language.KICK_SERVICE_UNAVAILABLE));
                 }
             } catch (ExpectableException e) {
-                return new Result(false, mm.deserialize(this.language.getProperty(Language.KICK_REQUEST_ERROR)));
+                return new Result(false, getMessage(Language.KICK_REQUEST_ERROR));
             }
         });
     }
@@ -190,7 +254,7 @@ public class Core {
         this.platformAdapter.onServerStop();
     }
 
-    void reloadConfig() {
+    protected void reloadConfig() {
         this.config.reload();
         this.language.reload();
     }

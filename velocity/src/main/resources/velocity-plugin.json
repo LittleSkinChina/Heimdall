@@ -11,6 +11,10 @@
     {
       "id": "luckperms",
       "optional": true
+    },
+    {
+      "id": "floodgate",
+      "optional": true
     }
   ],
   "main": "${group}.velocity.VelocityMain"

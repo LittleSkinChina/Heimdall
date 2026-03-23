@@ -1,12 +1,10 @@
 package cafe.honoka.heimdall.core.query;
 
-public class QueryResponse {
-    public final String uuid;
+public abstract class BaseQueryResponse {
     public final Status status;
     public final Boolean outlook;
 
-    public QueryResponse(String uuid, Status status, Boolean outlook) {
-        this.uuid = uuid;
+    public BaseQueryResponse(Status status, Boolean outlook) {
         this.status = status;
         this.outlook = outlook;
     }
