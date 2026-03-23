@@ -20,11 +20,11 @@ Heimdall 服务器插件支持多种 Minecraft 服务端平台，包括：
 - Velocity
   - 支持 3.1.0 或更高版本
 
-Heimdall 服务器插件支持验证通过 Geyser 和 Floodgate。
+Heimdall 服务器插件支持 Geyser 和 Floodgate。
 
 ### 获取插件
 
-你可以在 [Releases](https://github.com/LittleSkinChina/Heimdall/releases) 页面下载到最新版本的插件。
+你可以在 [红石中继站](https://www.mczwlt.net/resource/pt6hcjpc) 或 [Releases](https://github.com/LittleSkinChina/Heimdall/releases) 页面下载到最新版本的插件。
 
 **Heimdall 服务端插件采用跨平台兼容设计，不区分特定的服务端平台版本**，单一插件 JAR 文件即适用于所有支持服务端平台。
 
